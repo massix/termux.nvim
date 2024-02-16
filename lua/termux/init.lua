@@ -1,5 +1,6 @@
 local battery = require("termux.modules.battery")
 local volume = require("termux.modules.volume")
+local wakelock = require("termux.modules.wakelock")
 
 ---@class TermuxInfo
 ---@field battery BatteryInfo
@@ -151,6 +152,14 @@ M.get_volume_statusline = volume.get_statusline
 M.get_battery_info = battery.get_info
 M.get_battery_statusline = battery.get_statusline
 
+M.hold_wake_lock = function()
+	wakelock.wakelock(true)
+end
+
+M.release_wake_lock = function()
+	wakelock.wakelock(false)
+end
+
 M.stop_all_timers = function()
 	battery.stop_timer()
 	volume.stop_timer()
@@ -171,6 +180,8 @@ end
 M.setup = function(opts)
 	_G.termux_options = vim.tbl_deep_extend("force", _G.termux_options, opts)
 	M.start_all_timers()
+
+	wakelock.setup_commands()
 end
 
 return M

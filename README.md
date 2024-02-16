@@ -6,17 +6,17 @@ every statusline).
 
 Here you have some nice screenshots!
 
+### Music and call volumes, battery discharging
 <img src="./assets/termux-1.png" width="40%">
-Music and call volumes, battery discharging
 
+### Music and call volumes, battery charging wirelessly
 <img src="./assets/termux-2.png" width="40%">
-Music and call volumes, battery charging wirelessly
 
+### Music and call volumes, battery charging via cable
 <img src="./assets/termux-3.png" width="40%">
-Music and call volumes, battery charging via cable
 
+### Connected via SSH from the desktop
 ![Screenshot #4](./assets/termux-4.png)
-Connected via SSH from the desktop
 
 ## Usage
 Before using the plugin there are a couple of things you have to do manually on
@@ -38,6 +38,9 @@ Now you can install the plugin, for example using [Lazy](https://github.com/folk
 return {
   {
     "massix/termux.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+    },
     opts = {},
     event = "VimEnter",
   },
@@ -165,6 +168,11 @@ Lualine configuration easily:
     },
   },
 ````
+
+## Commands
+The plugin exposes two `nvim` commands: `:TermuxReleaseWakeLock` to release the
+wake lock and `:TermuxHoldWakeLock` to hold it.
+
 ## APIs
 The plugin exposes some APIs that you may want to use in your configuration.
 In the following table, I assume that
@@ -181,6 +189,8 @@ local termux = require("termux")
 | `termux.get_battery_info()`       | Trigger a background task to retrieve the battery information                |
 | `termux.get_battery_statusline()` | Builds a string with the battery information to be displayed in a statusline |
 | `termux.get_volume_statusline()`  | Builds a string with the volume information to be displayed in a statusline  |
+| `termux.release_wake_lock()`      | Release the wake lock                                                        |
+| `termux.hold_wake_lock()`         | Hold the wake lock                                                           |
 
 Both the `get_volume_info()` and the `get_battery_info()` will populate the
 `_G.termux_values` table for future use.

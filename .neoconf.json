@@ -1,0 +1,20 @@
+{
+  "neodev": {
+    "library": {
+      "enabled": true,
+      "plugins": [ "plenary.nvim", "neoconf.nvim" ],
+      "runtime": true,
+      "types": true
+    }
+  },
+  "neoconf": {
+    "plugins": {
+      "lua_ls": {
+        "enabled": true
+      }
+    }
+  },
+  "lspconfig": {
+    "sumneko_lua": {}
+  }
+}
