@@ -1,3 +1,5 @@
+[![Awesome](https://awesome.re/badge-flat.svg)](https://awesome.re)
+
 # Termux.nvim
 This plugin gathers information from the [Termux API](https://github.com/termux/termux-api) and make them available as
 `lua tables` for users. It also provides some helper functions to use in different

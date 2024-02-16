@@ -1,51 +1,38 @@
+local Job = require("plenary.job")
+
 local M = {}
 
 M.get_info = function()
-	local stdout = vim.loop.new_pipe(false)
-	_G.termux_volume_handle = vim.loop.spawn(
-		"termux-volume",
-		{ stdio = { nil, stdout, nil } },
-		vim.schedule_wrap(function(code)
-			stdout:read_stop()
-			stdout:close()
-			_G.termux_volume_handle:close()
-
+	Job:new({
+		command = "termux-volume",
+		on_exit = function(self, code)
 			if code ~= 0 then
-				vim.notify("Failure while trying to get volume status, exit code: " .. code, vim.log.levels.ERROR)
-			end
-		end)
-	)
-
-	vim.loop.read_start(stdout, function(err, data)
-		if err then
-			vim.notify("Error when trying to receive stdout: " .. err)
-		elseif data then
-			vim.schedule(function()
-				---@type VolumeInfo[]
-				---@diagnostic disable-next-line: assign-type-mismatch
-				local parsed_json = vim.fn.json_decode(data)
-				for _, stream in ipairs(parsed_json) do
-					for stream_type, stream_info in pairs(_G.termux_values.volumes) do
-						if stream.stream == stream_type then
-							stream_info.volume = stream.volume
-							stream_info.max_volume = stream.max_volume
+				vim.notify("Exit code for termux-volume is not 0, check logs.")
+			else
+				vim.schedule(function()
+					local data = table.concat(self:result(), "")
+					---@type VolumeInfo[]
+					---@diagnostic disable-next-line: assign-type-mismatch
+					local parsed_json = vim.fn.json_decode(data)
+					for _, stream in ipairs(parsed_json) do
+						for stream_type, stream_info in pairs(_G.termux_values.volumes) do
+							if stream.stream == stream_type then
+								stream_info.volume = stream.volume
+								stream_info.max_volume = stream.max_volume
+							end
 						end
 					end
-				end
-			end)
-		end
-	end)
+				end)
+			end
+		end,
+	}):start()
 end
 
 M.start_timer = function()
 	if _G.termux_values.timers.volume == nil then
 		-- launch it the first time to get the first opening values
 		_G.termux_values.timers.volume = vim.loop.new_timer()
-		_G.termux_values.timers.volume:start(
-			0,
-			_G.termux_options.volume.refresh_rate * 1000,
-			vim.schedule_wrap(M.get_info)
-		)
+		_G.termux_values.timers.volume:start(0, _G.termux_options.volume.refresh_rate * 1000, M.get_info)
 	end
 end
 
