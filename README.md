@@ -172,8 +172,13 @@ Lualine configuration easily:
 ````
 
 ## Commands
-The plugin exposes two `nvim` commands: `:TermuxReleaseWakeLock` to release the
-wake lock and `:TermuxHoldWakeLock` to hold it.
+The plugin also exposes some commands to interact with the [wake lock](https://wiki.termux.com/wiki/Termux-wake-lock#:~:text=termux-wake-lock%20and%20termux,wake-unlock%20in%20your%20~%2F%2e) command
+of Termux, used to make sure that the terminal will stay awake and won't be
+set to sleep by the application.
+
+* `:TermuxWakeLock <hold|release>` to either hold or release the WakeLock;
+* `:TermuxHoldWakeLock` alias for `:TermuxWakeLock hold`;
+* `:TermuxReleaseWakeLock` alias for `:TermuxWakeLock release`;
 
 ## APIs
 The plugin exposes some APIs that you may want to use in your configuration.
